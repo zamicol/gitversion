@@ -1,3 +1,4 @@
+//Package gitversion uses git to generate a version string useful for binary versioning.
 package gitversion
 
 import (
@@ -7,7 +8,26 @@ import (
 	"regexp"
 )
 
-//Get Use git to construct a version number using the latest tag and commit hash
+// Get uses git to construct a version string using tag and commit.
+//
+// For a clean git commit, Get() will return a simple hash.
+//
+//     026249145dab6c65dbfeedf7d01aa2720f51a815
+//
+// If there has been any change to tracked files, `(uncommited)` will be
+// appended to commit hash.
+//
+//     026249145dab6c65dbfeedf7d01aa2720f51a815 (uncommited)
+//
+// If there is tag information, the tag name will be prepended before the
+// commit hash.
+//
+//     v1.0 026249145dab6c65dbfeedf7d01aa2720f51a815
+//
+// Or if there are uncommited changes:
+//
+//     v1.0 026249145dab6c65dbfeedf7d01aa2720f51a815 (uncommited)
+//
 func Get() string {
 
 	////////////////////
@@ -18,7 +38,7 @@ func Get() string {
 	cmd.Stdout = &out
 	err := cmd.Run()
 	if err != nil {
-		err = errors.New("git command failed, and unable to get git version.  (Need to 'git init' and commit?)")
+		err = errors.New("git command failed.  (Need to 'git init' and commit?)" + err.Error())
 		panic(err)
 	}
 
@@ -36,8 +56,8 @@ func Get() string {
 	////////////////////
 	// tag
 	////////////////////
-	cmd = exec.Command("git", "tag")
-	//If there are no tags, git will return nothing
+	cmd = exec.Command("git", "tag") // If there are no tags, git returns nothing
+
 	out.Reset()
 	cmd.Stdout = &out
 	err = cmd.Run()
@@ -45,8 +65,11 @@ func Get() string {
 		panic(err)
 	}
 
-	reg = regexp.MustCompile(`\A.*`) //Grab first line
-	tag := reg.FindString(out.String()) + " "
+	reg = regexp.MustCompile(`\A.*`) // Grab first line
+	tag := reg.FindString(out.String())
+	if tag != "" {
+		tag = tag + " "
+	}
 
 	////////////////////
 	// uncommitted changes
@@ -59,7 +82,7 @@ func Get() string {
 		panic(err)
 	}
 
-	reg = regexp.MustCompile(`Changes to be committed`)
+	reg = regexp.MustCompile(`(Changes to be committed)|(Changes not staged for commit)`)
 	uncommited := reg.FindString(out.String())
 	if uncommited != "" {
 		uncommited = " (uncommited)"
