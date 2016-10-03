@@ -1,6 +1,8 @@
 # gitversion
 Use git for binary versioning.  
 
+See the godoc at https://godoc.org/github.com/zamicol/gitversion
+
 
 ## Quickstart
 
