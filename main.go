@@ -32,9 +32,7 @@ import (
 //
 func Get() (string, error) {
 
-	////////////////////
 	// commit hash
-	////////////////////
 	cmd := exec.Command("git", "log", "-1") // First log record
 	var out bytes.Buffer
 	cmd.Stdout = &out
@@ -53,9 +51,7 @@ func Get() (string, error) {
 
 	hash := matches[1]
 
-	////////////////////
 	// tag
-	////////////////////
 	cmd = exec.Command("git", "tag", "--sort=-taggerdate") // If there are no tags, git returns nothing
 
 	out.Reset()
@@ -71,9 +67,7 @@ func Get() (string, error) {
 		tag = tag + " "
 	}
 
-	////////////////////
 	// uncommitted changes
-	////////////////////
 	cmd = exec.Command("git", "status")
 	out.Reset()
 	cmd.Stdout = &out
@@ -88,8 +82,6 @@ func Get() (string, error) {
 		uncommited = " (uncommited)"
 	}
 
-	////////////////////
 	// construct our version and return.
-	////////////////////
 	return tag + hash + uncommited, nil
 }
