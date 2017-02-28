@@ -77,11 +77,11 @@ func Get() (string, error) {
 	}
 
 	reg = regexp.MustCompile(`(Changes to be committed)|(Changes not staged for commit)`)
-	uncommited := reg.FindString(out.String())
-	if uncommited != "" {
-		uncommited = " (uncommited)"
+	uncommitted := reg.FindString(out.String())
+	if uncommitted != "" {
+		uncommitted = " (uncommitted)"
 	}
 
 	// construct our version and return.
-	return tag + hash + uncommited, nil
+	return tag + hash + uncommitted, nil
 }

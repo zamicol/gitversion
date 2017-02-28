@@ -32,7 +32,7 @@ fi
 #   version="${BASH_REMATCH[0]} $version"
 # fi
 
-# uncommited
+# uncommitted
 status=$(git status)
 reg='(Changes to be committed)|(Changes not staged for commit)'
 if [[ $status =~ $reg ]]; then
