@@ -16,19 +16,19 @@ import (
 //
 //     026249145dab6c65dbfeedf7d01aa2720f51a815
 //
-// If there has been any change to tracked files, `(uncommited)` will be
+// If there has been any change to tracked files, `uncommitted` will be
 // appended to commit hash.
 //
-//     026249145dab6c65dbfeedf7d01aa2720f51a815 (uncommited)
+//     026249145dab6c65dbfeedf7d01aa2720f51a815 uncommitted
 //
 // If there is tag information, the tag name will be prepended before the
 // commit hash.
 //
-//     v1.0.0 026249145dab6c65dbfeedf7d01aa2720f51a815
+//     1.0.0 026249145dab6c65dbfeedf7d01aa2720f51a815
 //
-// Or if there are uncommited changes:
+// Or if there are uncommitted changes:
 //
-//     v1.0.0 026249145dab6c65dbfeedf7d01aa2720f51a815 (uncommited)
+//     1.0.0 026249145dab6c65dbfeedf7d01aa2720f51a815 uncommitted
 //
 func Get() (string, error) {
 
