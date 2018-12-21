@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # This script generates a `VERSION` file.
+# This is a alternative to the go file which does the same thing. 
 #
 # 1. First line is the "version".
 # 2. Second line is the build date.
