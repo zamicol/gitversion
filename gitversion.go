@@ -4,15 +4,23 @@ package gitversion
 import (
 	"bufio"
 	"bytes"
+	"crypto/sha256"
 	"errors"
+	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"time"
 )
 
 // DefaultFile is the default name for where version informaion is kept.
 const DefaultFile string = "VERSION"
+
+// TimeStamp is for using TimeStamp or not.
+// For fully deterministic versions, set to false.
+var TimeStamp = true
 
 // Version uses git to construct a version string using tag and commit.
 // This can be useful where deployed go binaries versioning is important.
@@ -36,6 +44,8 @@ const DefaultFile string = "VERSION"
 //
 //     v1.0.0 026249145dab6c65dbfeedf7d01aa2720f51a815 uncommitted
 //
+// Now this is a problem with uncommitted, since it will be the last hash.
+// TODO allow for deploy dir hasing.
 func version() (string, error) {
 
 	// commit hash
@@ -119,7 +129,12 @@ func Write(f string) (err error) {
 		return (err)
 	}
 
-	file.WriteString(version + "\n" + Now())
+	// Add timestamp
+	if TimeStamp {
+		version = version + "\n" + Now()
+	}
+
+	file.WriteString(version)
 	return nil
 }
 
@@ -142,4 +157,46 @@ func Get(f string) (version string, date string, err error) {
 	}
 
 	return version, date, nil
+}
+
+// Dir is for deterministic directory versioning.
+// See https://github.com/golang/mod/blob/ce943fd02449f621243c9ea6e64098e84752b92b/sumdb/dirhash/hash_test.go#L71
+func Dir(path string) string {
+	hash := sha256.New()
+	var previous []byte
+
+	err := filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
+		fmt.Println("Walking : " + path)
+		if err != nil {
+			fmt.Println("err")
+			return err
+		}
+
+		if !info.Mode().IsRegular() {
+			fmt.Println("Not regular")
+			fmt.Println(info)
+			return nil
+		}
+
+		data, err := ioutil.ReadFile(path)
+		if err != nil {
+			return err
+		}
+
+		previous = append(previous, data...)
+		previous = hash.Sum(previous)
+
+		fmt.Println("Previous: " + fmt.Sprintf("%x", previous))
+
+		return nil
+	})
+
+	fmt.Println("Outside walk")
+
+	if err != nil {
+		return ""
+	}
+
+	return fmt.Sprintf("%x", previous)
+
 }

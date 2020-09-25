@@ -1,0 +1,4 @@
+This file tests the deterministic dir function.  
+
+Here's some more entropy just for fun:
+T7SRR7BN57U90425NPWQD6XYWNE6Q--Q44PTVHKA51QM56E44

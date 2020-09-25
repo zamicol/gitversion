@@ -13,6 +13,13 @@ func TestWrite(t *testing.T) {
 	Clean()
 }
 
+func ExampleDir() {
+	v := Dir("test_dir")
+	fmt.Println(v)
+	// Output:
+	// e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+}
+
 // Cleans up testing.
 func Clean() {
 	// delete file
