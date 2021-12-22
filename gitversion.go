@@ -159,7 +159,7 @@ func Get(f string) (version string, date string, err error) {
 	return version, date, nil
 }
 
-// Dir is for deterministic directory versioning. See
+// Dir is for deterministic directory versioning. Go (in go mod) had the same problem. See
 // https://github.com/golang/mod/blob/ce943fd02449f621243c9ea6e64098e84752b92b/sumdb/dirhash/hash_test.go#L71
 // Not sure if the zip method is ideal, but since this is designed to be used
 // with dist, perhaps it's best to zip, then rename the zip deterministically.
@@ -168,7 +168,7 @@ func Dir(path string) string {
 	var previous []byte
 
 	err := filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
-		fmt.Println("Walking : " + path)
+		// fmt.Println("Walking : " + path)
 		if err != nil {
 			return err
 		}
@@ -190,7 +190,7 @@ func Dir(path string) string {
 		return nil
 	})
 
-	fmt.Println("Outside walk")
+	// fmt.Println("Outside walk")
 
 	if err != nil {
 		return ""
