@@ -1,4 +1,25 @@
-//Package gitversion uses git to generate a version string useful for binary versioning.
+// Package gitversion uses git to generate a version string useful for binary versioning.
+//
+// This can be useful where deployed go binaries versioning is important.
+//
+// For a clean git commit, Get() will return a simple hash.
+//
+//     v0.0.0 26249145DAB6C65DBFEEDF7D01AA2720F51A815
+//
+// If there has been any change to tracked files, `uncommitted` will be
+// appended to commit hash.
+//
+//     v0.0.0 26249145DAB6C65DBFEEDF7D01AA2720F51A815 uncommitted
+//
+// If there is tag information, the tag name will be prepended before the
+// commit hash.
+//
+//     v1.0.0 26249145DAB6C65DBFEEDF7D01AA2720F51A815
+//
+// Or if there are uncommitted changes:
+//
+//     v1.0.0 26249145DAB6C65DBFEEDF7D01AA2720F51A815 uncommitted
+//
 package gitversion
 
 import (
@@ -8,34 +29,14 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
+	"strings"
 	"time"
 )
 
-// DefaultFile is the default name for where version informaion is kept.
-const DefaultFile string = "VERSION"
+// DefaultName is the default name for VERSION file.
+const DefaultName string = "VERSION"
 
-// Version uses git to construct a version string using tag and commit.
-// This can be useful where deployed go binaries versioning is important.
-//
-//
-// For a clean git commit, Get() will return a simple hash.
-//
-//     v0.0.0 026249145dab6c65dbfeedf7d01aa2720f51a815
-//
-// If there has been any change to tracked files, `uncommitted` will be
-// appended to commit hash.
-//
-//     v0.0.0 026249145dab6c65dbfeedf7d01aa2720f51a815 uncommitted
-//
-// If there is tag information, the tag name will be prepended before the
-// commit hash.
-//
-//     v1.0.0 026249145dab6c65dbfeedf7d01aa2720f51a815
-//
-// Or if there are uncommitted changes:
-//
-//     v1.0.0 026249145dab6c65dbfeedf7d01aa2720f51a815 uncommitted
-//
+// version uses git to construct a version string using tag and commit.
 func version() (string, error) {
 
 	// commit hash
@@ -55,7 +56,7 @@ func version() (string, error) {
 		return "", errors.New("gitversion: unable to get git commit hash")
 	}
 
-	hash := matches[1]
+	hash := strings.ToUpper(matches[1]) // Upper case Hex.
 
 	// tag
 	cmd = exec.Command("git", "tag", "--sort=-taggerdate") // If there are no tags, git returns nothing
@@ -92,22 +93,26 @@ func version() (string, error) {
 	return tag + hash + uncommitted, nil
 }
 
-// Now returns time like the go mod format.
-//	yyyymmddhhmmss
-// Usefull for knowing build date.
+// Now returns human readable time.
+// 2006/01/02 15:04:05
+// for comparison, go mod uses the format: yyyymmddhhmmss
 func Now() string {
 	currentTime := time.Now()
-	return (currentTime.Format("20060102150405"))
+	return (currentTime.Format("2006/01/02 15:04:05"))
 }
 
 // Write writes out a version file.
 // A version file looks like this:
 //
-//	0.0.1 ef8f94357058ce9cba81909016b138e6d54c0381 uncommitted
-//	2017-02-28T19:49:11-0700
+//	0.0.1 EF8F94357058CE9CBA81909016B138E6D54C0381 uncommitted
+//	2006/01/02 15:04:05
 //
 // Where the first line is the version, the second line is build date.
 func Write(f string) (err error) {
+	if f == "" {
+		f = DefaultName
+	}
+
 	// O_WRONLY is write only.
 	file, err := os.OpenFile(f, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0666)
 	defer file.Close()
@@ -125,6 +130,10 @@ func Write(f string) (err error) {
 
 // Get gets the current version from the VERSION file
 func Get(f string) (version string, date string, err error) {
+	if f == "" {
+		f = DefaultName
+	}
+
 	file, err := os.Open(f)
 	if err != nil {
 		return "", "", err

@@ -9,13 +9,13 @@ The "version" is
 
 For example:
 
-    1.0.2 136540c6f09ba9783c6d6de89a7d9f2e038f6c26 uncommitted
+    1.0.2 136540C6F09BA9783C6D6DE89A7D9F2E038F6C26 uncommitted
 
 It's recommend `git tag`'s value be set to the semantic version.
 
 For example `git tag 0.0.1` will result in:
 
-    0.0.1 ef8f94357058ce9cba81909016b138e6d54c0381
+    0.0.1 EF8F94357058CE9CBA81909016B138E6D54C0381
 
 
 ## Go Quickstart
