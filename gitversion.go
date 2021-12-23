@@ -1,4 +1,5 @@
-// Package gitversion uses git to generate a version string useful for binary versioning.
+// Package gitversion uses git to generate a version string useful for binary
+// versioning.
 //
 // This can be useful where deployed go binaries versioning is important.
 //
@@ -6,13 +7,13 @@
 //
 //     v0.0.0 26249145DAB6C65DBFEEDF7D01AA2720F51A815
 //
-// If there has been any change to tracked files, `uncommitted` will be
-// appended to commit hash.
+// If there has been any change to tracked files, `uncommitted` will be appended
+// to commit hash.
 //
 //     v0.0.0 26249145DAB6C65DBFEEDF7D01AA2720F51A815 uncommitted
 //
-// If there is tag information, the tag name will be prepended before the
-// commit hash.
+// If there is tag information, the tag name will be prepended before the commit
+// hash.
 //
 //     v1.0.0 26249145DAB6C65DBFEEDF7D01AA2720F51A815
 //
@@ -26,6 +27,7 @@ import (
 	"bufio"
 	"bytes"
 	"errors"
+	"fmt"
 	"os"
 	"os/exec"
 	"regexp"
@@ -149,6 +151,20 @@ func Get(f string) (version string, date string, err error) {
 	if err := scanner.Err(); err != nil {
 		return "", "", err
 	}
-
 	return version, date, nil
+}
+
+// GetJSON gets from VERSION file and returns as JSON.
+func GetJSON(f string) (JSON string, err error) {
+	v, d, err := Get(f)
+	if err != nil {
+		return "", err
+	}
+	s := strings.Split(v, " ")
+	JSON = fmt.Sprintf(`{"tag":"%s","hash":"%s",`, s[0], s[1])
+	if len(s) == 3 {
+		JSON += fmt.Sprintf(`"committed":"%s",`, s[2])
+	}
+	JSON += fmt.Sprintf(`"build_date":"%s"}`, d)
+	return
 }
