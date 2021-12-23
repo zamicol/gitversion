@@ -5,9 +5,11 @@ import (
 	"bufio"
 	"bytes"
 	"errors"
+	"fmt"
 	"os"
 	"os/exec"
 	"regexp"
+	"strings"
 	"time"
 )
 
@@ -55,8 +57,7 @@ func version() (string, error) {
 		return "", errors.New("gitversion: unable to get git commit hash")
 	}
 
-	hash := matches[1]
-
+	hash := strings.ToUpper(matches[1])
 	// tag
 	cmd = exec.Command("git", "tag", "--sort=-taggerdate") // If there are no tags, git returns nothing
 
@@ -140,6 +141,20 @@ func Get(f string) (version string, date string, err error) {
 	if err := scanner.Err(); err != nil {
 		return "", "", err
 	}
-
 	return version, date, nil
+}
+
+// GetJSON gets from VERSION file and returns as JSON.
+func GetJSON(f string) (JSON string, err error) {
+	v, d, err := Get(f)
+	if err != nil {
+		return "", err
+	}
+	s := strings.Split(v, " ")
+	JSON = fmt.Sprintf(`{"tag":"%s","hash":"%s",`, s[0], s[1])
+	if len(s) == 3 {
+		JSON += fmt.Sprintf(`"committed":"%s",`, s[2])
+	}
+	JSON += fmt.Sprintf(`"build_date":"%s"}`, d)
+	return
 }
