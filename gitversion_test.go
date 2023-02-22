@@ -44,7 +44,7 @@ func ExampleGetJSON() {
 }
 
 func ExampleVersion() {
-	v, err := version()
+	v, err := Version()
 	if err != nil {
 		fmt.Println(err)
 	}

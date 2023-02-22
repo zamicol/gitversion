@@ -120,7 +120,7 @@ func Write(f string) (err error) {
 	if err != nil {
 		return (err)
 	}
-	version, err := version()
+	version, err := Version()
 	if err != nil {
 		return (err)
 	}
