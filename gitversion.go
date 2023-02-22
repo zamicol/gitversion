@@ -5,22 +5,21 @@
 //
 // For a clean git commit, Get() will return a simple hash.
 //
-//     v0.0.0 26249145DAB6C65DBFEEDF7D01AA2720F51A815
+//	v0.0.0 26249145DAB6C65DBFEEDF7D01AA2720F51A815
 //
 // If there has been any change to tracked files, `uncommitted` will be appended
 // to commit hash.
 //
-//     v0.0.0 26249145DAB6C65DBFEEDF7D01AA2720F51A815 uncommitted
+//	v0.0.0 26249145DAB6C65DBFEEDF7D01AA2720F51A815 uncommitted
 //
 // If there is tag information, the tag name will be prepended before the commit
 // hash.
 //
-//     v1.0.0 26249145DAB6C65DBFEEDF7D01AA2720F51A815
+//	v1.0.0 26249145DAB6C65DBFEEDF7D01AA2720F51A815
 //
 // Or if there are uncommitted changes:
 //
-//     v1.0.0 26249145DAB6C65DBFEEDF7D01AA2720F51A815 uncommitted
-//
+//	v1.0.0 26249145DAB6C65DBFEEDF7D01AA2720F51A815 uncommitted
 package gitversion
 
 import (
@@ -39,7 +38,7 @@ import (
 const DefaultName string = "VERSION"
 
 // version uses git to construct a version string using tag and commit.
-func version() (string, error) {
+func Version() (string, error) {
 
 	// commit hash
 	cmd := exec.Command("git", "log", "-1") // First log record
